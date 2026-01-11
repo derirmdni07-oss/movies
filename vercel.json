@@ -1,0 +1,34 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/movie/:id",
+      "destination": "/movie.html?id=:id"
+    },
+    {
+      "source": "/tv/:id/:s/:e",
+      "destination": "/tv.html?id=:id&s=:s&e=:e"
+    },
+    {
+      "source": "/tv/:id",
+      "destination": "/tv.html?id=:id&s=1&e=1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*).(html|xml|json)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    }
+  ]
+}

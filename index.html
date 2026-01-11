@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Movies & TV Shows — Experience Premium Cinema</title>
+    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'><path fill='%234285F4' d='M512 64H64C28.7 64 0 92.7 0 128v256c0 35.3 28.7 64 64 64h448c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64zm-144 192L224 352V160l144 96z'/></svg>">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #050505;
+            --surface: #111111;
+            --accent: #4285F4; 
+            --accent-glow: rgba(66, 133, 244, 0.4);
+            --text: #ffffff;
+            --text-dim: #b0b0b0;
+            --nav-h: 75px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background-color: var(--bg); color: var(--text); 
+            font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden;
+        }
+
+        /* --- HEADER --- */
+        nav {
+            position: fixed; top: 0; width: 100%; height: var(--nav-h);
+            z-index: 1000; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 5%; background: linear-gradient(to bottom, rgba(5,5,5,1), rgba(5,5,5,0.8), transparent);
+            backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        /* LOGO DESIGN TERBAIK */
+        .logo { 
+            text-decoration: none; display: flex; align-items: center; gap: 12px;
+        }
+        .logo-icon {
+            width: 40px; height: 40px; background: var(--accent);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px var(--accent-glow); transition: 0.3s;
+        }
+        .logo:hover .logo-icon { transform: rotate(-5deg) scale(1.1); }
+        .logo-icon i { color: #fff; font-size: 1.1rem; }
+        
+        .logo-text { display: flex; flex-direction: column; line-height: 1; }
+        .logo-text .top { font-size: 1.3rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+        .logo-text .bottom { 
+            font-size: 0.65rem; font-weight: 700; color: var(--accent); letter-spacing: 2.5px;
+            text-transform: uppercase; margin-top: 3px;
+        }
+
+        .search-container { position: relative; width: 280px; }
+        .search-container input {
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 15px 10px 40px; border-radius: 12px; color: #fff; outline: none; transition: 0.3s;
+        }
+        .search-container i { position: absolute; left: 14px; top: 12px; color: var(--text-dim); }
+        .search-container input:focus { border-color: var(--accent); background: rgba(255,255,255,0.1); box-shadow: 0 0 15px var(--accent-glow); }
+
+        /* --- HERO --- */
+        .hero {
+            height: 80vh; width: 100%; background-size: cover; background-position: center;
+            position: relative; display: flex; align-items: flex-end; padding: 0 5% 100px;
+        }
+        .hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, var(--bg) 5%, transparent 60%), linear-gradient(to right, var(--bg) 0%, transparent 50%); }
+        .hero-content { position: relative; z-index: 10; max-width: 800px; }
+        .hero-content h1 { font-size: 4.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 25px; letter-spacing: -2px; }
+        
+        .btn-watch { 
+            background: var(--accent); color: #fff; padding: 16px 40px; border-radius: 12px;
+            text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 12px; transition: 0.3s;
+            box-shadow: 0 10px 20px var(--accent-glow);
+        }
+        .btn-watch:hover { transform: translateY(-3px); box-shadow: 0 15px 30px var(--accent-glow); }
+
+        /* --- GRID CONTENT --- */
+        .main-wrapper { padding: 0 5% 120px; }
+        .section-box { margin-top: 60px; }
+        .section-header { margin-bottom: 30px; }
+        .section-title { font-size: 1.6rem; font-weight: 800; border-left: 5px solid var(--accent); padding-left: 20px; }
+
+        .movie-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 25px;
+        }
+
+        .card { 
+            background: var(--surface); border-radius: 16px; overflow: hidden; 
+            transition: 0.5s cubic-bezier(0.2, 1, 0.2, 1); cursor: pointer; position: relative;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        .card:hover { transform: scale(1.05) translateY(-10px); border-color: rgba(66, 133, 244, 0.4); }
+        .card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
+        .card-info { padding: 15px; }
+        .card-info h3 { font-size: 0.95rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-info p { color: var(--accent); font-size: 0.75rem; font-weight: 800; margin-top: 5px; }
+
+        .load-more-container { text-align: center; padding: 60px 0; }
+        .btn-load {
+            background: rgba(66, 133, 244, 0.05); border: 1px solid var(--accent); color: var(--accent);
+            padding: 14px 50px; border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.3s;
+        }
+        .btn-load:hover { background: var(--accent); color: #fff; }
+
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 2.5rem; }
+            .movie-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            .search-container { width: 150px; }
+            .logo-text .top { font-size: 1rem; }
+            .logo-text .bottom { font-size: 0.5rem; letter-spacing: 1.5px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="index.html" class="logo">
+        <div class="logo-icon">
+            <i class="fas fa-play"></i>
+        </div>
+        <div class="logo-text">
+            <span class="top">MOVIES</span>
+            <span class="bottom">& TV SHOWS</span>
+        </div>
+    </a>
+    <div class="search-container">
+        <i class="fas fa-search"></i>
+        <input type="text" id="search-input" placeholder="Search..." onkeyup="handleSearch(event)">
+    </div>
+</nav>
+
+<header class="hero" id="hero-bg">
+    <div class="hero-content">
+        <h1 id="hero-title">...</h1>
+        <a href="#" id="hero-link" class="btn-watch"><i class="fas fa-play"></i> START STREAMING</a>
+    </div>
+</header>
+
+<div class="main-wrapper">
+    <div class="section-box">
+        <div class="section-header">
+            <h2 class="section-title">Blockbuster Movies</h2>
+        </div>
+        <div id="movie-grid" class="movie-grid"></div>
+        <div class="load-more-container">
+            <button class="btn-load" onclick="loadMore('movie')">EXPAND MOVIES</button>
+        </div>
+    </div>
+
+    <div class="section-box">
+        <div class="section-header">
+            <h2 class="section-title">Trending Series</h2>
+        </div>
+        <div id="tv-grid" class="movie-grid"></div>
+        <div class="load-more-container">
+            <button class="btn-load" onclick="loadMore('tv')">EXPAND SERIES</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const CONFIG = {
+        KEY: '22be462e6d3de1dbab03d1ca50847b5a',
+        BASE: 'https://api.themoviedb.org/3',
+        IMG: 'https://image.tmdb.org/t/p/w500',
+        HD: 'https://image.tmdb.org/t/p/original'
+    };
+
+    let moviePage = 1; let tvPage = 1;
+
+    async function init() {
+        try {
+            const res = await fetch(`${CONFIG.BASE}/trending/all/day?api_key=${CONFIG.KEY}`);
+            const data = await res.json();
+            const top = data.results[0];
+            document.getElementById('hero-bg').style.backgroundImage = `url(${CONFIG.HD + top.backdrop_path})`;
+            document.getElementById('hero-title').innerText = top.title || top.name;
+            document.getElementById('hero-link').href = (top.media_type === 'tv' ? 'tv.html' : 'movie.html') + `?id=${top.id}&s=1&e=1`;
+        } catch(e) {}
+        loadMore('movie'); loadMore('tv');
+    }
+
+    async function loadMore(type) {
+        const page = type === 'movie' ? moviePage : tvPage;
+        const res = await fetch(`${CONFIG.BASE}/${type}/popular?api_key=${CONFIG.KEY}&page=${page}`);
+        const data = await res.json();
+        render(data.results, type === 'movie' ? 'movie-grid' : 'tv-grid', type);
+        if(type === 'movie') moviePage++; else tvPage++;
+    }
+
+    function render(list, targetId, type) {
+        const grid = document.getElementById(targetId);
+        list.forEach(item => {
+            if(!item.poster_path) return;
+            const card = document.createElement('div');
+            card.className = 'card';
+            const targetPage = type === 'tv' ? 'tv.html' : 'movie.html';
+            card.onclick = () => window.location.href = `${targetPage}?id=${item.id}${type === 'tv' ? '&s=1&e=1' : ''}`;
+            card.innerHTML = `<img src="${CONFIG.IMG + item.poster_path}" alt="poster"><div class="card-info"><h3>${item.title || item.name}</h3><p>${type.toUpperCase()}</p></div>`;
+            grid.appendChild(card);
+        });
+    }
+
+    async function handleSearch(e) {
+        const query = e.target.value;
+        if(query.length > 2) {
+            const res = await fetch(`${CONFIG.BASE}/search/multi?api_key=${CONFIG.KEY}&query=${query}`);
+            const data = await res.json();
+            document.getElementById('movie-grid').innerHTML = ''; document.getElementById('tv-grid').innerHTML = '';
+            render(data.results.filter(i => i.media_type === 'movie'), 'movie-grid', 'movie');
+            render(data.results.filter(i => i.media_type === 'tv'), 'tv-grid', 'tv');
+        } else if (query.length === 0) {
+            moviePage = 1; tvPage = 1;
+            document.getElementById('movie-grid').innerHTML = ''; document.getElementById('tv-grid').innerHTML = '';
+            loadMore('movie'); loadMore('tv');
+        }
+    }
+    init();
+</script>
+</body>
+</html>

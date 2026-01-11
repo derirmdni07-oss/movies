@@ -1,0 +1,16 @@
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Movie",
+  "name": "Judul Film",
+  "image": "https://image.tmdb.org/t/p/w500/poster.jpg",
+  "description": "Deskripsi film...",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "8.5",
+    "bestRating": "10",
+    "worstRating": "1",
+    "ratingCount": "1250"
+  }
+}
+</script>

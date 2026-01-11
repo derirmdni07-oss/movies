@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Allow: /movie/
+Allow: /tv/
+Disallow: /assets/js/api-config.js
+Disallow: /redirect.html
+
+# Global Sitemap Reference
+Sitemap: https://yourdomain.com/sitemap.xml

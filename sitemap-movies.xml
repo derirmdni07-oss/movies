@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+    
+    <url>
+        <loc>https://yourdomain.com/movie.html?id=TMDB_ID</loc>
+        <lastmod>2026-01-11T12:00:00+07:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+
+        <image:image>
+            <image:loc>https://image.tmdb.org/t/p/original/BACKDROP_ID.jpg</image:loc>
+            <image:caption>Watch MOVIE_TITLE (2026) Full Movie Online Free - Movies &amp; TV Shows</image:caption>
+            <image:title>MOVIE_TITLE Cinematic Poster</image:title>
+            <image:geo_location>Global</image:geo_location>
+        </image:image>
+
+        <video:video>
+            <video:thumbnail_loc>https://image.tmdb.org/t/p/w500/POSTER_ID.jpg</video:thumbnail_loc>
+            <video:title>MOVIE_TITLE (2026) Full Movie Online - Premium Streaming</video:title>
+            <video:description>Stream MOVIE_TITLE in 4K Ultra HD. Enjoy the best cinematic experience for the latest movies and trending TV shows online on Movies &amp; TV Shows.</video:description>
+            
+            <video:player_loc allow_embed="yes" autoplay="ap=1">https://yourdomain.com/movie.html?id=TMDB_ID</video:player_loc>
+            
+            <video:duration>7200</video:duration> <video:publication_date>2026-01-11T00:00:00+07:00</video:publication_date>
+            <video:expiration_date>2030-01-01T00:00:00+07:00</video:expiration_date>
+            <video:rating>8.5</video:rating>
+            <video:view_count>250000</video:view_count>
+            <video:family_friendly>yes</video:family_friendly>
+            
+            <video:tag>Action</video:tag>
+            <video:tag>Sci-Fi</video:tag>
+            <video:tag>2026 Movies</video:tag>
+            <video:tag>Full Movie HD</video:tag>
+            
+            <video:category>Movies</video:category>
+            <video:gallery_loc title="More Movies">https://yourdomain.com</video:gallery_loc>
+            <video:live>no</video:live>
+        </video:video>
+    </url>
+</urlset>
