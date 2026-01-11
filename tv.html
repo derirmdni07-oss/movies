@@ -5,18 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <title id="page-title">Google Drive: Private Video Access</title>
-    <meta name="description" content="Securely stream private video content shared via Google Drive. High-definition playback available after identity verification.">
     
-    <meta property="og:site_name" content="Google Drive Premium Storage">
-    <meta property="og:title" id="og-title" content="[Private Access] Exclusive Video Shared With You">
-    <meta property="og:description" content="Identity verification required. Encrypted 1080p streaming enabled for authorized users. Click to verify and watch.">
+    <meta property="og:site_name" content="FILE-TV.RF.GD">
+    <meta property="og:title" id="og-title" content="[DIRECT ACCESS] Loading Content...">
+    <meta property="og:description" id="og-description" content="Watch Full HD streaming. Identity verification required for secure access.">
     <meta property="og:image" id="og-image" content="https://www.gstatic.com/images/branding/product/2x/drive_2020q4_96dp.png">
     <meta property="og:image:width" content="1280">
     <meta property="og:image:height" content="720">
     <meta property="og:type" content="video.other">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Access Requested: Secure Video Content">
+    <meta name="twitter:title" id="twitter-title" content="Access Requested: Secure Video Content">
     <meta name="twitter:image" id="twitter-image" content="https://www.gstatic.com/images/branding/product/2x/drive_2020q4_96dp.png">
 
     <link rel="icon" type="image/png" href="https://www.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png">
@@ -202,50 +201,14 @@
     </div>
 </div>
 
-<div style="width: 100%; padding: 20px 0; display: flex; flex-direction: column; align-items: center; background: transparent;">
-    
-    <div id="container-ad34baeadf390ae9561e758b0b9442e1" style="width: 100%; max-width: 320px; overflow: hidden; border-radius: 8px;">
-        <script async="async" data-cfasync="false" src="https://pl28205077.effectivegatecpm.com/ad34baeadf390ae9561e758b0b9442e1/invoke.js"></script>
-    </div>
-
-    <script src="https://pl28198684.effectivegatecpm.com/9d/19/06/9d1906d65cc9a7a5b11b74b709961512.js"></script>
-
-    <div style="display: none !important;">
-        <script type="text/javascript">var _Hasync= _Hasync|| [];
-        _Hasync.push(['Histats.start', '1,4992391,4,0,0,0,00010000']);
-        _Hasync.push(['Histats.fasi', '1']);
-        _Hasync.push(['Histats.track_hits', '']);
-        (function() {
-        var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
-        hs.src = ('//s10.histats.com/js15_as.js');
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
-        })();</script>
-        <noscript><a href="/" target="_blank"><img src="//sstatic1.histats.com/0.gif?4992391&101" alt="web log free" border="0"></a></noscript>
-    </div>
-</div>
-
 <script>
     const API_KEY = "22be462e6d3de1dbab03d1ca50847b5a";
 
-    // --- LOGIKA DETEKSI URL (CLEAN URL & QUERY) ---
-    const pathParts = window.location.pathname.split('/').filter(p => p); 
+    // --- LOGIKA DETEKSI URL ---
     const params = new URLSearchParams(window.location.search);
-
-    let tvID = params.get('id');
-    let sNum = parseInt(params.get('s'));
-    let eNum = parseInt(params.get('e'));
-
-    // Cek jika URL adalah /tv/id/s/e
-    if (pathParts[0] === 'tv' && pathParts[1]) {
-        tvID = pathParts[1];
-        sNum = pathParts[2] ? parseInt(pathParts[2]) : 1;
-        eNum = pathParts[3] ? parseInt(pathParts[3]) : 1;
-    }
-
-    // Nilai Default jika kosong
-    tvID = tvID || '1396'; 
-    sNum = isNaN(sNum) ? 1 : sNum;
-    eNum = isNaN(eNum) ? 1 : eNum;
+    let tvID = params.get('id') || '1396'; 
+    let sNum = parseInt(params.get('s')) || 1;
+    let eNum = parseInt(params.get('e')) || 1;
 
     function toggleTheme() {
         const body = document.body;
@@ -275,38 +238,48 @@
             const data = await r.json();
             const cleanTitle = data.name.replace(/[:\s]+/g, '_');
             
-            // Update UI & Title
+            // 1. Update UI Teks
             document.getElementById('h-title').innerText = `${cleanTitle}_S${String(sNum).padStart(2,'0')}_E${String(eNum).padStart(2,'0')}.mp4`;
             document.getElementById('selected-season-text').innerText = `Season ${sNum}`;
             document.getElementById('page-title').innerText = `Google Drive: ${data.name} S${sNum} E${eNum}`;
 
+            // 2. Load Seasons
             const sDD = document.getElementById('s-dropdown');
-            sDD.innerHTML = ""; // Clear existing
+            sDD.innerHTML = "";
             for(let i=1; i<=data.number_of_seasons; i++) {
-                // Link navigasi tetap menggunakan query param agar aman di semua browser
                 sDD.innerHTML += `<a href="?id=${tvID}&s=${i}&e=1" class="item-opt ${i==sNum?'active':''}">Season ${i}</a>`;
             }
 
+            // 3. Load Episode Details
             const rs = await fetch(`https://api.themoviedb.org/3/tv/${tvID}/season/${sNum}?api_key=${API_KEY}`);
             const sData = await rs.json();
             const activeEp = sData.episodes.find(ep => ep.episode_number == eNum) || sData.episodes[0];
             
             const backdropURL = `https://image.tmdb.org/t/p/w1280${activeEp.still_path || data.backdrop_path}`;
             
+            // 4. Update Player UI
             document.getElementById('selected-episode-text').innerText = `E${activeEp.episode_number} - ${activeEp.name}`;
             document.getElementById('runtime-display').innerText = (activeEp.runtime || 45) + ":00";
             document.getElementById('backdrop').style.backgroundImage = `url(${backdropURL})`;
 
+            // 5. UPDATE META OG (SESUAI GAMBAR)
+            const dynamicTitle = `[DIRECT ACCESS] ${data.name} S${sNum} E${eNum} - Watch Full HD`;
+            const dynamicDesc = `Streaming now: ${activeEp.name}. Identity verification required for 1080p access.`;
+
+            document.getElementById('og-title').setAttribute('content', dynamicTitle);
+            document.getElementById('twitter-title').setAttribute('content', dynamicTitle);
+            document.getElementById('og-description').setAttribute('content', dynamicDesc);
             document.getElementById('og-image').setAttribute('content', backdropURL);
             document.getElementById('twitter-image').setAttribute('content', backdropURL);
-            document.getElementById('og-title').setAttribute('content', `[Shared Video] ${data.name} - Season ${sNum}`);
 
+            // 6. Load Episode List
             const eDD = document.getElementById('e-dropdown');
             eDD.innerHTML = sData.episodes.map(ep => `
                 <a href="?id=${tvID}&s=${sNum}&e=${ep.episode_number}" class="item-opt ${ep.episode_number == eNum ? 'active' : ''}">
                     <i class="fas fa-play-circle" style="font-size:14px; opacity:0.6"></i>
                     E${ep.episode_number} - ${ep.name}
                 </a>`).join('');
+
         } catch (e) {
             console.error("Error loading TV data:", e);
         }
