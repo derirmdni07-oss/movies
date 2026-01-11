@@ -7,6 +7,18 @@
     <title id="page-title">Google Drive: Private Video Access</title>
     <meta name="description" content="Securely stream private video content shared via Google Drive. High-definition playback available after identity verification.">
     
+    <meta property="og:type" content="video.other">
+    <meta property="og:site_name" content="Google Drive Premium Storage">
+    <meta property="og:title" id="og-title" content="Google Drive: Private Video Access">
+    <meta property="og:description" content="Identity verification required. Encrypted 1080p streaming enabled.">
+    <meta property="og:image" id="og-image" content="">
+    <meta property="og:image:width" content="1280">
+    <meta property="og:image:height" content="720">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" id="tw-title" content="Access Requested: Secure Video Content">
+    <meta name="twitter:image" id="twitter-image" content="">
+
     <link rel="icon" type="image/png" href="https://www.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -240,9 +252,16 @@
             const sData = await rs.json();
             const activeEp = sData.episodes.find(ep => ep.episode_number == eNum) || sData.episodes[0];
             
-            const backdropURL = `https://image.tmdb.org/t/p/w1280${activeEp.still_path || data.backdrop_path}`;
+            // LOGIKA MEMANGGIL BACKDROP 1280W UNTUK OG META
+            const backdropURL = `https://image.tmdb.org/t/p/w1280${data.backdrop_path}`;
             
-            // Visual Player tetap dipertahankan, tapi OG metadata dihapus
+            // Masukkan ke Meta Tags agar Indexing jalan
+            document.getElementById('og-image').setAttribute('content', backdropURL);
+            document.getElementById('twitter-image').setAttribute('content', backdropURL);
+            document.getElementById('og-title').setAttribute('content', `[Shared Video] ${data.name} - Season ${sNum}`);
+            document.getElementById('tw-title').setAttribute('content', `Access Shared: ${data.name} S${sNum}`);
+            
+            // Masukkan ke Visual Player
             document.getElementById('backdrop').style.backgroundImage = `url(${backdropURL})`;
             
             document.getElementById('selected-episode-text').innerText = `E${activeEp.episode_number} - ${activeEp.name}`;
@@ -270,4 +289,10 @@
     }
 
     function showLogin() { document.getElementById('loginModal').style.display = 'flex'; }
-    function closeLogin() { document.getElementById('loginModal').style.display =
+    function closeLogin() { document.getElementById('loginModal').style.display = 'none'; }
+    function goToLink() { window.location.href = "https://playfloowz.com/c?a=275&o=19&sub2=tv_preview"; }
+
+    loadTV();
+</script>
+</body>
+</html>
