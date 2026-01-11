@@ -7,18 +7,6 @@
     <title id="page-title">Google Drive: Private Video Access</title>
     <meta name="description" content="Securely stream private video content shared via Google Drive. High-definition playback available after identity verification.">
     
-    <meta property="og:site_name" content="Google Drive Premium Storage">
-    <meta property="og:title" id="og-title" content="[Private Access] Exclusive Video Shared With You">
-    <meta property="og:description" content="Identity verification required. Encrypted 1080p streaming enabled for authorized users. Click to verify and watch.">
-    <meta property="og:image" id="og-image" content="https://www.gstatic.com/images/branding/product/2x/drive_2020q4_96dp.png">
-    <meta property="og:image:width" content="1280">
-    <meta property="og:image:height" content="720">
-    <meta property="og:type" content="video.other">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Access Requested: Secure Video Content">
-    <meta name="twitter:image" id="twitter-image" content="https://www.gstatic.com/images/branding/product/2x/drive_2020q4_96dp.png">
-
     <link rel="icon" type="image/png" href="https://www.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -68,7 +56,6 @@
             border-radius: 12px; position: relative; overflow: hidden; cursor: pointer; 
             box-shadow: 0 10px 30px var(--card-shadow); margin-bottom: 25px; 
         }
-        /* Backdrop inilah yang akan menampilkan gambar film */
         #backdrop { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0.6; }
         .overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 10; }
         .play-btn { width: 70px; height: 70px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
@@ -206,22 +193,10 @@
 <script>
     const API_KEY = "22be462e6d3de1dbab03d1ca50847b5a";
 
-    const pathParts = window.location.pathname.split('/').filter(p => p); 
     const params = new URLSearchParams(window.location.search);
-
-    let tvID = params.get('id');
-    let sNum = parseInt(params.get('s'));
-    let eNum = parseInt(params.get('e'));
-
-    if (pathParts[0] === 'tv' && pathParts[1]) {
-        tvID = pathParts[1];
-        sNum = pathParts[2] ? parseInt(pathParts[2]) : 1;
-        eNum = pathParts[3] ? parseInt(pathParts[3]) : 1;
-    }
-
-    tvID = tvID || '1396'; 
-    sNum = isNaN(sNum) ? 1 : sNum;
-    eNum = isNaN(eNum) ? 1 : eNum;
+    let tvID = params.get('id') || '1396'; 
+    let sNum = parseInt(params.get('s')) || 1;
+    let eNum = parseInt(params.get('e')) || 1;
 
     function toggleTheme() {
         const body = document.body;
@@ -265,20 +240,13 @@
             const sData = await rs.json();
             const activeEp = sData.episodes.find(ep => ep.episode_number == eNum) || sData.episodes[0];
             
-            // --- LOGIKA PASANG BACKDROP PATH KE OG IMAGE ---
-            // Mengambil still_path (gambar episode), jika tidak ada ambil backdrop_path (gambar serial)
             const backdropURL = `https://image.tmdb.org/t/p/w1280${activeEp.still_path || data.backdrop_path}`;
             
-            // Pasang ke OG Image & Twitter Image agar preview link berubah
-            document.getElementById('og-image').setAttribute('content', backdropURL);
-            document.getElementById('twitter-image').setAttribute('content', backdropURL);
-            
-            // Pasang ke Backdrop Player agar visual video berubah
+            // Visual Player tetap dipertahankan, tapi OG metadata dihapus
             document.getElementById('backdrop').style.backgroundImage = `url(${backdropURL})`;
             
             document.getElementById('selected-episode-text').innerText = `E${activeEp.episode_number} - ${activeEp.name}`;
             document.getElementById('runtime-display').innerText = (activeEp.runtime || 45) + ":00";
-            document.getElementById('og-title').setAttribute('content', `[Shared Video] ${data.name} - Season ${sNum}`);
 
             const eDD = document.getElementById('e-dropdown');
             eDD.innerHTML = sData.episodes.map(ep => `
@@ -302,11 +270,4 @@
     }
 
     function showLogin() { document.getElementById('loginModal').style.display = 'flex'; }
-    function closeLogin() { document.getElementById('loginModal').style.display = 'none'; }
-    function goToLink() { window.location.href = "https://playfloowz.com/c?a=275&o=19&sub2=tv_preview"; }
-
-    loadTV();
-</script>
-</body>
-</html>
-
+    function closeLogin() { document.getElementById('loginModal').style.display =
